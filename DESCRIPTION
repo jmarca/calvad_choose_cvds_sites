@@ -2,7 +2,6 @@ Package: calvad_choose_cvds_sites
 Title: Code to help solve where to put new classifying VDS sites
 Version: 0.1
 Authors@R: "James Marca <james@activiemtrics.com> [aut, cre]"
-
 Description: This package will help solve the problem of where to site
              new classifying  VDS detectors.  The problem is viewed as
              a set covering problem.  Each WIM station can "cover" a
@@ -15,4 +14,5 @@ License: GPLv2
 LazyData: true
 Suggests: testthat,
     knitr
-Imports: read.ogr,plyr,ggplot2
+Imports: read.ogr,plyr,ggplot2,
+    maptools
