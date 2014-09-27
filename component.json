@@ -1,0 +1,14 @@
+{
+  "name": "calvad_choose_cvds_sites",
+  "repo": "jmarca/calvad_choose_cvds_sites",
+  "description": "hackity hack, in R",
+  "version": "0.0.1",
+  "keywords": ["CalVAD", "R", "rstats"],
+    "main":"R/fetch_wim.R",
+  "scripts": [
+  ],
+  "dependencies": {
+    "jmarca/rstats_couch_utils":"*"
+  },
+  "license": "GPLV2"
+}
