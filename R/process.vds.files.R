@@ -110,7 +110,7 @@ vdsassigned <- geom_point(data=vds.df@data, aes(x=longitude, y=latitude, color=f
 vdsonly <- geom_point(data=vds.df@data, aes(x=longitude, y=latitude))
 
 
-pdf("map_sites.pdf", width = 8, height = 10)
+png("map_sites.", width = 8, height = 10)
 
 areamap
 
