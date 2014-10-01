@@ -30,6 +30,7 @@ covered <-list()
 p4s <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
 groupsites <- function(dfv,distance=16){
+
     ## cheating here, but too lazy to do otherwise
     freeway_dir <- dfv$freeway_dir[1]
     freeway_id <-  dfv$freeway_id[1]
@@ -41,8 +42,9 @@ groupsites <- function(dfv,distance=16){
     proj4string(dfv) <- p4s
     vds.km <- spDists(dfv,longlat=TRUE)
     wim.covering.set <- c()
-    covered.idx <- rep(FALSE,dim(vds.df)[1])
+    covered.idx <- rep(FALSE,dim(dfv)[1])
     if(sum(limit.wim.idx)>0){
+
         wim.vds.km <- spDists(wim.df[limit.wim.idx,],dfv,longlat=TRUE)
         close.idx <- wim.vds.km < limit
 
@@ -96,6 +98,9 @@ groupsites <- function(dfv,distance=16){
 lim.df.vds.idx <- vds.df@data$freeway_dir == 'N' & vds.df@data$freeway_id == 5
 
 limited.vds <- vds.df[lim.df.vds.idx,]
+
+dfv <-  as.data.frame(limited.vds)
+
 
 library(OpenStreetMap)
 
