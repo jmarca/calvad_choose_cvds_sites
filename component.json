@@ -8,7 +8,7 @@
   "scripts": [
   ],
   "dependencies": {
-    "jmarca/rstats_couch_utils":"*"
+      "jmarca/rstats_couch_utils":"*"
   },
   "license": "GPLV2"
 }

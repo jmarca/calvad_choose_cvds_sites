@@ -1,5 +1,14 @@
 library(sp)
 
+library(read.ogr)
+
+## source('/read.ogr.R',chdir=TRUE)
+
+## load the wim and vds data
+source('./fetch.vds.R')
+
+source('./fetch.wim.R')
+
 wim.km <- spDists(wim.df,longlat=TRUE)
 
 vds.km <- spDists(vds.df,longlat=TRUE)
@@ -8,60 +17,85 @@ wim.vds.km <- spDists(wim.df,vds.df,longlat=TRUE)
 
 dim(vds.df)
 
-limit <- 16 ## 500 km is too long
 
 
+limit <- 16 ## 500 km is too long...
 
 covered <-list()
 
 ## first assign locations to the WIM stations
 ## use the maximum cover first, then move down the list
 
-wim.covering.set <- c()
-close.idx <- wim.vds.km<limit
-covered.idx <- rep(FALSE,dim(vds.df)[1])
-while( sum(close.idx[,!covered.idx]) > 0  ){
-    if(sum(!covered.idx)==1){
-        convert.site <- which.min(covered.idx)
-    }else{
-        ranking <- rowSums(close.idx[,!covered.idx])
-        convert.site <- which.max(ranking)
+
+p4s <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+
+groupsites <- function(dfv,distance=16){
+    ## cheating here, but too lazy to do otherwise
+    freeway_dir <- dfv$freeway_dir[1]
+    freeway_id <-  dfv$freeway_id[1]
+    limit.wim.idx <- wim.df@data$direction == freeway_dir &
+        wim.df@data$direction == freeway_dir
+
+    ## re-create spatial points data frame objects
+    coordinates(dfv) <- c('coords.x1','coords.x2')
+    proj4string(dfv) <- p4s
+    vds.km <- spDists(dfv,longlat=TRUE)
+    wim.covering.set <- c()
+    covered.idx <- rep(FALSE,dim(vds.df)[1])
+    if(sum(limit.wim.idx)>0){
+        wim.vds.km <- spDists(wim.df[limit.wim.idx,],dfv,longlat=TRUE)
+        close.idx <- wim.vds.km < limit
+
+        while( sum(close.idx[,!covered.idx]) > 0  ){
+            if(sum(!covered.idx)==1){
+                convert.site <- which.min(covered.idx)
+            }else{
+                ranking <- rowSums(close.idx[,!covered.idx])
+                convert.site <- which.max(ranking)
+            }
+            new.sites.idx <- close.idx[convert.site,]
+            ## drop ones already covered
+            new.sites.idx[covered.idx] <- FALSE
+            dfv$group[new.sites.idx] <- paste(c('wim',wim.df@data[limit.wim.idx,][convert.site,c('site_no','direction')]),collapse='.')
+            covered.idx <- covered.idx | close.idx[convert.site,]
+            wim.covering.set <- c(wim.covering.set,convert.site)
+        }
     }
-    new.sites.idx <- close.idx[convert.site,]
-    ## drop ones already covered
-    new.sites.idx[covered.idx] <- FALSE
-    vds.df@data$group[new.sites.idx] <- paste(c('wim',wim.df@data[convert.site,c('site_no','direction')]),collapse='.')
-    covered.idx <- covered.idx | close.idx[convert.site,]
-    wim.covering.set <- c(wim.covering.set,convert.site)
+    wim.covered.idx <-  covered.idx
+    ## reset things
+    cvds.covering.set <- c()
+    close.idx <- vds.km<limit  ## now looking at vds to vds distances
+    ## keep covered.idx the same to avoid double counting
+    while(
+        sum(close.idx[,!covered.idx])
+        > 0
+    ){
+        if(sum(!covered.idx)==1){
+            convert.site <- which.min(covered.idx)
+        }else{
+            ranking <- rowSums(close.idx[,!covered.idx])
+            convert.site <- which.max(ranking)
+        }
+        new.sites.idx <- close.idx[convert.site,]
+        ## drop ones already covered
+        new.sites.idx[covered.idx] <- FALSE
+        dfv[new.sites.idx,'group'] <- dfv$id[convert.site]
+        covered.idx <- covered.idx | close.idx[convert.site,]
+        cvds.covering.set <- c(cvds.covering.set,convert.site)
+    }
+    vds.covered.idx <- covered.idx
+    vds.covered.idx[wim.covered.idx] <- FALSE
+
+    ## return something useful
+    return (as.data.frame(dfv))
 }
 
-wim.covered.idx <-  covered.idx
 
+## test it out
 
-## reset things
-cvds.covering.set <- c()
-close.idx <- vds.km<limit  ## now looking at vds to vds distances
-## keep covered.idx the same to avoid double counting
+lim.df.vds.idx <- vds.df@data$freeway_dir == 'N' & vds.df@data$freeway_id == 5
 
-while(
-    sum(close.idx[,!covered.idx])
-    > 0
-){
-    if(sum(!covered.idx)==1){
-        convert.site <- which.min(covered.idx)
-    }else{
-        ranking <- rowSums(close.idx[,!covered.idx])
-        convert.site <- which.max(ranking)
-    }
-    new.sites.idx <- close.idx[convert.site,]
-    ## drop ones already covered
-    new.sites.idx[covered.idx] <- FALSE
-    vds.df[new.sites.idx,'group'] <- vds.df@data$id[convert.site]
-    covered.idx <- covered.idx | close.idx[convert.site,]
-    cvds.covering.set <- c(cvds.covering.set,convert.site)
-}
-vds.covered.idx <- covered.idx
-vds.covered.idx[wim.covered.idx] <- FALSE
+limited.vds <- vds.df[lim.df.vds.idx,]
 
 library(OpenStreetMap)
 
