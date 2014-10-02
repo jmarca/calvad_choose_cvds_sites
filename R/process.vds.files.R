@@ -16,11 +16,40 @@ limit <- 16 ## 500 km is too long...
 ## invoke group sites with plyr
 library(parallel)
 makeForkCluster(nnodes=3)
+
 ddply(as.data.frame(vds.df),.(freeway_id,freeway_dir),groupsites,limit,wim.df,.progress = "text",.parallel=TRUE)
 
+## that didn't work out well!
+
+freeways <- unique(vds.df@data[,c('freeway_id','freeway_dir')])
+
+groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[2,1] &  vds.df@data$freeway_dir==freeways[2,2],]
+          ,limit,wim.df)
+
+groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[3,1] & vds.df@data$freeway_dir==freeways[3,2],]
+          ,limit,wim.df)
+
+groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[4,1] & vds.df@data$freeway_dir==freeways[4,2],]
+          ,limit,wim.df)
+
+groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[2,1] & vds.df@data$freeway_dir==freeways[2,2],]
+          ,limit,wim.df)
+
+groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[2,1] & vds.df@data$freeway_dir==freeways[2,2],]
+          ,limit,wim.df)
+
+o
+## problem with single element lists
+
+groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==30 & vds.df@data$freeway_dir=='E',]
+          ,limit,wim.df)
+
+as.data.frame(vds.df)[vds.df@data$freeway_id==30 & vds.df@data$freeway_dir=='E',]
+
+## problem with single element lists
 
 
-
+ddply(as.data.frame(vds.df),.(freeway_id,freeway_dir),groupsites,limit,wim.df)
 
 
 library(OpenStreetMap)
