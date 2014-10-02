@@ -23,15 +23,21 @@ groupsites <- function(dfv,distance=16,priority.sites=NULL){
     covered.idx <- rep(FALSE,dim(dfv)[1])
 
     if(!is.null(priority.sites)){
+        using.wim <- TRUE
         limit.wim.idx <- priority.sites@data$direction == freeway_dir &
             priority.sites@data$freeway_id == freeway_id
         if(length(priority.sites@data$direction)==0){
+            using.wim <- FALSE
             limit.wim.idx <- priority.sites@data$freeway_dir == freeway_dir &
                 priority.sites@data$freeway_id == freeway_id
         }
+
         if(sum(limit.wim.idx)>0){
-            wim.vds.km <- spDists(priority.sites[limit.wim.idx,],dfv,longlat=TRUE)
-            close.idx <- wim.vds.km < limit
+            allowed.sites <- priority.sites[limit.wim.idx,]
+
+            wim.vds.km <- spDists(allowed.sites,dfv,longlat=TRUE)
+            close.idx <- wim.vds.km < distance
+
             while( sum(close.idx[,!covered.idx]) > 0  ){
                 if(sum(!covered.idx)==1){
                     convert.site <- which.min(covered.idx)
@@ -42,7 +48,18 @@ groupsites <- function(dfv,distance=16,priority.sites=NULL){
                 new.sites.idx <- close.idx[convert.site,]
                 ## drop ones already covered
                 new.sites.idx[covered.idx] <- FALSE
-                dfv@data$group[new.sites.idx] <- paste(c('wim',priority.sites@data[limit.wim.idx,][convert.site,c('site_no','direction')]),collapse='.')
+
+                if(using.wim){
+                    dfv@data$group[new.sites.idx] <-
+                        paste(c('wim',
+                                allowed.sites@data[convert.site,
+                                                   c('site_no',
+                                                     'direction')])
+                             ,collapse='.')
+                }else{ ## VDS site, not WIM site
+                    dfv@data$group[new.sites.idx] <-
+                        allowed.sites@data[convert.site,'id']
+                }
                 covered.idx <- covered.idx | close.idx[convert.site,]
                 wim.covering.set <- c(wim.covering.set,convert.site)
             }
@@ -53,7 +70,7 @@ groupsites <- function(dfv,distance=16,priority.sites=NULL){
     wim.covered.idx <-  covered.idx
     ## reset things
     cvds.covering.set <- c()
-    close.idx <- vds.km<limit  ## now looking at vds to vds distances
+    close.idx <- vds.km<distance  ## now looking at vds to vds distances
     ## keep covered.idx the same to avoid double counting
 
     while(

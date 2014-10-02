@@ -27,14 +27,12 @@ test_that('groupsites works without a wim data set',{
 
 test_that('specific VDS sites can be chosen',{
 
-    priority.vds.sites <- sample.data.405[c(1,100),]
+    priority.vds.sites <- sample.data.405[c(1,80,120),]
 
     df <- groupsites(as.data.frame(sample.data.405),16,priority.vds.sites)
 
-    expect_that(sort(unique(df$group)),
-                equals(as.factor(
-                    c(772455,'wim.112.N','wim.13.N','wim.16.N','wim.60.N')
-                )))
+    expect_that(is.element(priority.vds.sites$id,df$group)
+                ,equals(c(TRUE,TRUE,TRUE)))
 
 
 })
