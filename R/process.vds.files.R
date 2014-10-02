@@ -9,22 +9,14 @@ source('./fetch.vds.R')
 
 source('./fetch.wim.R')
 
-wim.km <- spDists(wim.df,longlat=TRUE)
-
-vds.km <- spDists(vds.df,longlat=TRUE)
-
-wim.vds.km <- spDists(wim.df,vds.df,longlat=TRUE)
-
-dim(vds.df)
-
-
+source('./groupsites.R')
 
 limit <- 16 ## 500 km is too long...
 
-covered <-list()
-
-## first assign locations to the WIM stations
-## use the maximum cover first, then move down the list
+## invoke group sites with plyr
+library(parallel)
+makeForkCluster(nnodes=3)
+ddply(as.data.frame(vds.df),.(freeway_id,freeway_dir),groupsites,limit,wim.df,.progress = "text",.parallel=TRUE)
 
 
 

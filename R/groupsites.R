@@ -1,7 +1,7 @@
 
 p4s <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
 
-groupsites <- function(dfv,distance=16){
+groupsites <- function(dfv,distance=16,priority.sites){
 
     ## cheating here, but too lazy to do otherwise
     freeway_dir <- dfv$freeway_dir[1]
