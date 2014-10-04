@@ -14,8 +14,8 @@ source('./groupsites.R')
 limit <- 16 ## 500 km is too long...
 
 ## invoke group sites with plyr
-library(parallel)
-makeForkCluster(nnodes=3)
+#library(parallel)
+#makeForkCluster(nnodes=3)
 
 ddply(as.data.frame(vds.df),.(freeway_id,freeway_dir),groupsites,limit,wim.df,.progress = "text",.parallel=TRUE)
 
@@ -38,7 +38,7 @@ groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[2,1] & vds.df@
 groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[2,1] & vds.df@data$freeway_dir==freeways[2,2],]
           ,limit,wim.df)
 
-o
+
 ## problem with single element lists
 
 groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==30 & vds.df@data$freeway_dir=='E',]
@@ -49,7 +49,7 @@ as.data.frame(vds.df)[vds.df@data$freeway_id==30 & vds.df@data$freeway_dir=='E',
 ## problem with single element lists
 
 
-ddply(as.data.frame(vds.df),.(freeway_id,freeway_dir),groupsites,limit,wim.df)
+plyr::ddply(as.data.frame(vds.df),.(freeway_id,freeway_dir),groupsites,limit,wim.df)
 
 
 library(OpenStreetMap)

@@ -9,7 +9,4 @@ wim.query <- "select w.* from wim_geoview w where wim_type ~* 'data'"
 
 
 
-wim.df <- read.ogr::readOgrSQL(wim.query)
-
-
-expect_that(dim(wim.df),equals(c(28,9)))
+# wim.df <- read.ogr::readOgrSQL(wim.query)

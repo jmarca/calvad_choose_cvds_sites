@@ -3,16 +3,16 @@ Title: Code to help solve where to put new classifying VDS sites
 Version: 0.1
 Authors@R: "James Marca <james@activiemtrics.com> [aut, cre]"
 Description: This package will help solve the problem of where to site
-             new classifying  VDS detectors.  The problem is viewed as
-             a set covering problem.  Each WIM station can "cover" a
-             number of VDS stations (as determined by a distance
-             parameter).  The stations that *aren't* covered by the
-             existing WIM stations need the new classifying VDS
-             stations, or their truck estimation solutions will be weak.
+  new classifying  VDS detectors.  The problem is viewed as
+  a set covering problem.  Each WIM station can "cover" a
+  number of VDS stations (as determined by a distance
+  parameter).  The stations that *aren't* covered by the
+  existing WIM stations need the new classifying VDS
+  stations, or their truck estimation solutions will be weak.
 Depends: R (>= 3.1.1)
 License: GPLv2
 LazyData: true
 Suggests: testthat,
     knitr
-Imports: read.ogr,plyr,ggplot2,
-    maptools
+Imports: read.ogr,plyr,ggplot2, maptools,
+    groupsitesr

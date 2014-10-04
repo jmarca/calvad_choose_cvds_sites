@@ -9,4 +9,4 @@ vds.query <- "select v.* from vds_current_view v join carb_airdistricts_aligned_
 
 vds.query <- "select v.* from vds_current_view v  where vdstype='ML'"
 
-vds.df <- read.ogr::readOgrSQL(vds.query)
+# vds.df <- read.ogr::readOgrSQL(vds.query)

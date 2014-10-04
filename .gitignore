@@ -2,5 +2,6 @@
 .Rhistory
 .RData
 /R/hacking.file.R
-/components/
+components
 *~
+Rcheck
