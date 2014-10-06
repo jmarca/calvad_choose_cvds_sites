@@ -9,7 +9,6 @@ source('./fetch.vds.R')
 
 source('./fetch.wim.R')
 
-source('./groupsites.R')
 
 limit <- 16 ## 500 km is too long...
 
@@ -23,20 +22,22 @@ ddply(as.data.frame(vds.df),.(freeway_id,freeway_dir),groupsites,limit,wim.df,.p
 
 freeways <- unique(vds.df@data[,c('freeway_id','freeway_dir')])
 
-groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[2,1] &  vds.df@data$freeway_dir==freeways[2,2],]
+tests.df <-  groupsites(as.data.frame(sample.data.405),16,wim.df)
+
+tests.df <- groupsitesr::groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[2,1] &  vds.df@data$freeway_dir==freeways[2,2],]
+                                   ,limit
+                                   ,wim.df)
+
+tests.df <- groupsitesr::groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[3,1] & vds.df@data$freeway_dir==freeways[3,2],]
           ,limit,wim.df)
 
-groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[3,1] & vds.df@data$freeway_dir==freeways[3,2],]
+tests.df <- groupsitesr::groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[4,1] & vds.df@data$freeway_dir==freeways[4,2],]
           ,limit,wim.df)
 
-groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[4,1] & vds.df@data$freeway_dir==freeways[4,2],]
-          ,limit,wim.df)
+tests.df <- groupsitesr::groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==2 & vds.df@data$freeway_dir=='E',]
+                                   ,limit
+                                   ,wim.df)
 
-groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[2,1] & vds.df@data$freeway_dir==freeways[2,2],]
-          ,limit,wim.df)
-
-groupsites(as.data.frame(vds.df)[vds.df@data$freeway_id==freeways[2,1] & vds.df@data$freeway_dir==freeways[2,2],]
-          ,limit,wim.df)
 
 
 ## problem with single element lists
@@ -48,8 +49,12 @@ as.data.frame(vds.df)[vds.df@data$freeway_id==30 & vds.df@data$freeway_dir=='E',
 
 ## problem with single element lists
 
+library(plyr)
 
-plyr::ddply(as.data.frame(vds.df),.(freeway_id,freeway_dir),groupsites,limit,wim.df)
+grouped.vds.df <- plyr::ddply(as.data.frame(vds.df),.(freeway_id,freeway_dir)
+                             ,groupsitesr::groupsites
+                             ,limit
+                             ,wim.df)
 
 
 library(OpenStreetMap)
