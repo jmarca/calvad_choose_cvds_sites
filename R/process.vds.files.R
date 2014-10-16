@@ -56,6 +56,11 @@ grouped.vds.df <- plyr::ddply(as.data.frame(vds.df),.(freeway_id,freeway_dir)
                              ,limit
                              ,wim.df)
 
+## 525 sites with limit =16
+
+
+### if I set limit = 80 (16 * 5 == 50 miles) then I get subscript out
+### of bounds for N99.  Need a new test case for groupsitesr
 
 library(OpenStreetMap)
 
